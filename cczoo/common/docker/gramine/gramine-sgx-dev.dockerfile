@@ -61,6 +61,27 @@ RUN apt-get install -y libsgx-pce-logic libsgx-ae-qve libsgx-quote-ex libsgx-quo
 # Install SGX-DCAP
 RUN apt-get install -y libsgx-dcap-ql-dev libsgx-dcap-default-qpl libsgx-dcap-quote-verify-dev libsgx-dcap-default-qpl-dev
 
+###################################################
+RUN DEBIAN_FRONTEND=noninteractive apt install -y \
+    sgx-aesm-service \
+    libsgx-aesm-launch-plugin \
+    libsgx-aesm-epid-plugin \
+    libsgx-aesm-quote-ex-plugin \
+    libsgx-aesm-ecdsa-plugin \
+    libsgx-dcap-quote-verify \
+    psmisc
+
+RUN mkdir -p /var/run/aesmd/
+
+# enable Microsoft software repository
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | sudo tee /etc/apt/sources.list.d/msprod.list
+RUN wget -qO - https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# install Azure DCAP library
+RUN sudo apt-get update
+RUN sudo apt-get install -y az-dcap-client
+###################################################
+
 # Gramine
 ENV GRAMINEDIR=/gramine
 ENV SGX_DCAP_VERSION=DCAP_1.11
@@ -129,3 +150,11 @@ COPY configs /
 # Workspace
 ENV WORK_SPACE_PATH=${GRAMINEDIR}
 WORKDIR ${WORK_SPACE_PATH}
+
+###################################################
+COPY restart_aesm.sh /restart_aesm.sh
+
+ENTRYPOINT ["/bin/sh", "-c"]
+CMD ["/restart_aesm.sh ; exec /bin/bash"]
+
+###################################################
