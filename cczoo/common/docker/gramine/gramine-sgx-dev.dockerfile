@@ -62,7 +62,7 @@ RUN apt-get install -y libsgx-pce-logic libsgx-ae-qve libsgx-quote-ex libsgx-quo
 RUN apt-get install -y libsgx-dcap-ql-dev libsgx-dcap-default-qpl libsgx-dcap-quote-verify-dev libsgx-dcap-default-qpl-dev
 
 ###################################################
-RUN DEBIAN_FRONTEND=noninteractive apt install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     sgx-aesm-service \
     libsgx-aesm-launch-plugin \
     libsgx-aesm-epid-plugin \
@@ -74,12 +74,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y \
 RUN mkdir -p /var/run/aesmd/
 
 # enable Microsoft software repository
-RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | sudo tee /etc/apt/sources.list.d/msprod.list
-RUN wget -qO - https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | tee /etc/apt/sources.list.d/msprod.list
+RUN wget -qO - https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
 # install Azure DCAP library
-RUN sudo apt-get update
-RUN sudo apt-get install -y az-dcap-client
+RUN apt-get update
+RUN apt-get install -y az-dcap-client
 ###################################################
 
 # Gramine
